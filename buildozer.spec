@@ -15,7 +15,7 @@ android.archs = arm64-v8a, armeabi-v7a
 
 # KivyMD (latest, Android-friendly), ffpyplayer for video, camera4kivy for camera,
 # plus common deps your code uses.
-requirements = python3,kivy==2.3.0,kivymd@git+https://github.com/kivymd/KivyMD.git,ffpyplayer,kivy_garden.camera4kivy,numpy,pillow,urllib3,certifi
+requirements = python3==3.13.7,hostpython3==3.13.7,kivy==2.3.0,kivymd@git+https://github.com/kivymd/KivyMD.git,ffpyplayer,kivy_garden.camera4kivy,numpy,pillow,urllib3,certifi
 
 # If you DON'T use NumPy on-device, you can remove "numpy" to shrink APK size.
 
@@ -88,5 +88,6 @@ android.compile_sdk = 35
 # android.packaging_options = 
 
 # If using GPS/location updates in background, you'll also need proper foreground service setup in code.
+
 
 
