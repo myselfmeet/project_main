@@ -1,0 +1,74 @@
+#:kivy 2.3.0
+
+<LoginScreen@MDScreen>:
+    name: "login"
+    MDBoxLayout:
+        orientation: "vertical"
+        padding: dp(16)
+        spacing: dp(12)
+
+        MDTopAppBar:
+            title: "Sign in"
+
+        MDTextField:
+            id: tf_login_identifier
+            hint_text: "Email or 10-digit mobile"
+
+        MDTextField:
+            id: tf_login_pin
+            hint_text: "4–6 digit PIN"
+            password: True
+            input_filter: "int"
+            max_text_length: 6
+
+        MDBoxLayout:
+            adaptive_height: True
+            spacing: dp(8)
+            MDRaisedButton:
+                text: "Login"
+                on_release: app.auth_login(tf_login_identifier.text, tf_login_pin.text)
+            MDFlatButton:
+                text: "Create account"
+                on_release: app.change_screen("register")
+
+<RegisterScreen@MDScreen>:
+    name: "register"
+    MDBoxLayout:
+        orientation: "vertical"
+        padding: dp(16)
+        spacing: dp(12)
+
+        MDTopAppBar:
+            title: "Create account"
+
+        MDTextField:
+            id: tf_reg_name
+            hint_text: "Full name"
+
+        MDTextField:
+            id: tf_reg_identifier
+            hint_text: "Email or 10-digit mobile"
+
+        MDTextField:
+            id: tf_reg_pin
+            hint_text: "4–6 digit PIN"
+            password: True
+            input_filter: "int"
+            max_text_length: 6
+
+        MDTextField:
+            id: tf_reg_pin2
+            hint_text: "Confirm PIN"
+            password: True
+            input_filter: "int"
+            max_text_length: 6
+
+        MDBoxLayout:
+            adaptive_height: True
+            spacing: dp(8)
+            MDRaisedButton:
+                text: "Create account"
+                on_release: app.auth_register(tf_reg_identifier.text, tf_reg_pin.text, tf_reg_pin2.text, tf_reg_name.text)
+            MDFlatButton:
+                text: "Back to login"
+                on_release: app.change_screen("login")

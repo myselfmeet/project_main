@@ -1,0 +1,229 @@
+#:kivy 2.3.0
+
+<ContentNavigationDrawer@MDBoxLayout>:
+    orientation: "vertical"
+    padding: dp(16)
+    spacing: dp(8)
+    MDLabel:
+        text: "Menu"
+        font_style: "H6"
+    MDList:
+        OneLineListItem:
+            text: "Profile"
+            on_release: app.change_screen("profile")
+        OneLineListItem:
+            text: "Uploads"
+            on_release: app.change_screen("uploads")
+        OneLineListItem:
+            text: "Camera"
+            on_release: app.change_screen("camera")
+        OneLineListItem:
+            text: "Logout"
+            on_release: app.auth_logout()
+
+MDNavigationLayout:
+    ScreenManager:
+        id: screen_manager
+
+        # instantiate the templates from auth.kv
+        LoginScreen:
+        RegisterScreen:
+
+        # --- Profile ---
+        MDScreen:
+            name: "profile"
+            ScrollView:
+                MDBoxLayout:
+                    orientation: "vertical"
+                    spacing: dp(16)
+                    padding: dp(16)
+                    adaptive_height: True
+
+                    MDTopAppBar:
+                        title: "Profile"
+                        left_action_items: [["menu", lambda x: app.open_nav_drawer()]]
+                        right_action_items: [["content-save", lambda x: app.save_profile()]]
+
+                    MDCard:
+                        radius: [dp(16), dp(16), dp(16), dp(16)]
+                        elevation: 1
+                        padding: dp(16)
+                        size_hint_y: None
+                        height: dp(110)
+                        MDBoxLayout:
+                            spacing: dp(16)
+                            MDIcon:
+                                icon: "account"
+                                size_hint: None, None
+                                size: dp(64), dp(64)
+                                theme_text_color: "Custom"
+                                text_color: app.theme_cls.primary_color
+                            MDBoxLayout:
+                                orientation: "vertical"
+                                MDLabel:
+                                    id: lbl_name
+                                    text: app.profile_data.get("name", "Your Name")
+                                    font_style: "H6"
+                                MDLabel:
+                                    id: lbl_mobile
+                                    text: app.profile_data.get("mobile", "Add mobile")
+                                    theme_text_color: "Hint"
+
+                    MDTextField:
+                        id: tf_name
+                        text: app.profile_data.get("name", "")
+                        hint_text: "Full name"
+
+                    MDTextField:
+                        id: tf_mobile
+                        text: app.profile_data.get("mobile", "")
+                        hint_text: "Mobile (10 digits)"
+                        input_filter: "int"
+                        max_text_length: 10
+
+                    MDTextField:
+                        id: tf_email
+                        text: app.profile_data.get("email", "")
+                        hint_text: "Email"
+
+                    MDTextField:
+                        id: tf_state
+                        text: app.profile_data.get("state", "")
+                        hint_text: "State"
+
+                    MDTextField:
+                        id: tf_district
+                        text: app.profile_data.get("district", "")
+                        hint_text: "District"
+
+                    MDTextField:
+                        id: tf_address
+                        text: app.profile_data.get("address", "")
+                        hint_text: "Address / Notes"
+                        multiline: True
+                        max_text_length: 240
+
+                    MDBoxLayout:
+                        size_hint_y: None
+                        height: dp(56)
+                        spacing: dp(12)
+                        MDRaisedButton:
+                            text: "Save"
+                            on_release: app.save_profile()
+                        MDFlatButton:
+                            text: "Reset"
+                            on_release: app.reset_profile_view()
+
+        # --- Uploads ---
+        MDScreen:
+            name: "uploads"
+            MDBoxLayout:
+                orientation: "vertical"
+                MDTopAppBar:
+                    title: "Past uploads"
+                    left_action_items: [["menu", lambda x: app.open_nav_drawer()]]
+                    right_action_items: [["folder", lambda x: app.open_uploads_folder()], ["file-export", lambda x: app.show_csv_path()]]
+                ScrollView:
+                    do_scroll_x: False
+                    MDGridLayout:
+                        id: uploads_grid
+                        cols: 2
+                        adaptive_height: True
+                        padding: dp(8)
+                        spacing: dp(8)
+                        row_default_height: dp(160)
+
+        # --- Camera ---
+        MDScreen:
+            name: "camera"
+            MDBoxLayout:
+                orientation: "vertical"
+
+                MDTopAppBar:
+                    title: "Camera"
+                    left_action_items: [["menu", lambda x: app.open_nav_drawer()]]
+
+                BoxLayout:
+                    id: cam_holder
+                    padding: dp(12)
+                    canvas.before:
+                        Color:
+                            rgba: 0.95, 0.95, 0.95, 1
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
+
+                MDBoxLayout:
+                    adaptive_height: True
+                    padding: dp(12)
+                    spacing: dp(16)
+                    Widget:
+                        size_hint_x: 1
+                    MDRaisedButton:
+                        id: shutter_btn
+                        text: "●"
+                        font_size: "22sp"
+                        on_press: app.on_shutter_press()
+                        on_release: app.on_shutter_release()
+                    MDRaisedButton:
+                        id: video_btn
+                        text: "Start Video"
+                        on_release: app.toggle_video_recording()
+                    MDRaisedButton:
+                        text: "Upload"
+                        on_release: app.pick_image() if hasattr(app, "pick_image") else None
+                    MDLabel:
+                        id: timer_lbl
+                        text: "00:00"
+                        halign: "center"
+                        size_hint_x: 0.6
+                    Widget:
+                        size_hint_x: 1
+
+        # --- Preview ---
+        MDScreen:
+            name: "preview"
+            MDBoxLayout:
+                orientation: "vertical"
+
+                MDTopAppBar:
+                    title: "Preview"
+                    left_action_items: [["menu", lambda x: app.open_nav_drawer()]]
+
+                BoxLayout:
+                    id: preview_container
+                    padding: dp(12)
+                    AsyncImage:
+                        id: preview_image
+                        mipmap: True
+                        nocache: False
+                        allow_stretch: True
+                        keep_ratio: True
+
+                MDBoxLayout:
+                    adaptive_height: True
+                    padding: dp(12)
+                    spacing: dp(12)
+                    MDRaisedButton:
+                        text: "Save to Gallery"
+                        # guard in case your current main.py doesn't have this method
+                        on_release: app.save_current_to_gallery() if hasattr(app, "save_current_to_gallery") else None
+                    MDFlatButton:
+                        text: "Retake"
+                        on_release: app.change_screen("camera")
+
+                MDTextField:
+                    id: desc_input
+                    hint_text: "Add description"
+                    mode: "rectangle"         # works across KivyMD versions
+                    multiline: True
+                    size_hint_x: 0.92
+                    size_hint_y: None
+                    height: "64dp"
+                    pos_hint: {"center_x": 0.5}
+                    helper_text_mode: "on_focus"
+
+
+    MDNavigationDrawer:
+        id: nav_drawer
+        ContentNavigationDrawer:
